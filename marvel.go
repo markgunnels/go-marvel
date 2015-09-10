@@ -53,7 +53,10 @@ func (c Client) fetch(path string, params interface{}, out interface{}) error {
 		return fmt.Errorf("error response from API: %d\n%s", resp.StatusCode, slurp)
 	}
 	defer resp.Body.Close()
-	return json.NewDecoder(resp.Body).Decode(out)
+
+	fmt.Println("HELLO")
+
+	return json.Unmarshal(resp.Body, &out)
 }
 
 func (c Client) baseURL(path string, params interface{}) url.URL {
@@ -352,47 +355,132 @@ type ComicsResponse struct {
 
 // Comic represents a single Comic.
 type Comic struct {
-	ResourceURI        *string  `json:"resourceURI,omitempty"`
-	ID                 *int     `json:"id,omitempty"`
-	Name               *string  `json:"id,omitempty"`
-	DigitalID          *int     `json:"digitalId,omitempty"`
-	Title              *string  `json:"title,omitempty"`
-	IssueNumber        *float64 `json:"issueNumber,omitempty"`
-	VariantDescription *string  `json:"variantDescription,omitEmpty"`
-	Description        *string  `json:"description,omitempty"`
-	Modified           *Date    `json:"modified,omitempty"`
-	ISBN               *string  `json:"isbn,omitempty"`
-	UPC                *string  `json:"upc,omitempty"`
-	DiamondCode        *string  `json:"diamondCode,omitempty"`
-	EAN                *string  `json:"ean,omitempty"`
-	ISSN               *string  `json:"issn,omitempty"`
-	Format             *string  `json:"format,omitempty"`
-	PageCount          *int     `json:"pageCount,omitEmpty"`
-	TextObjects        []struct {
-		Type     string `json:"text,omitempty"`
-		Language string `json:"language,omitempty"`
-		Text     string `json:"text,omitempty"`
-	} `json:"textObjects,omitempty"`
-	URLs            []URL   `json:"urls,omitempty"`
-	Series          *Series `json:"series,omitempty"`
-	Variants        []Comic `json:"variants,omitempty"`
-	Collections     []Comic `json:"collections,omitempty"`
-	CollectedIssues []Comic `json:"collectedIssues,omitempty"`
+	ID                 int    `json:"id"`
+	Digitalid          int    `json:"digitalId"`
+	Title              string `json:"title"`
+	Issuenumber        int    `json:"issueNumber"`
+	Variantdescription string `json:"variantDescription"`
+	Description        string `json:"description"`
+	Modified           string `json:"modified"`
+	Isbn               string `json:"isbn"`
+	Upc                string `json:"upc"`
+	Diamondcode        string `json:"diamondCode"`
+	Ean                string `json:"ean"`
+	Issn               string `json:"issn"`
+	Format             string `json:"format"`
+	Pagecount          int    `json:"pageCount"`
+	Textobjects        []struct {
+		Type     string `json:"type"`
+		Language string `json:"language"`
+		Text     string `json:"text"`
+	} `json:"textObjects"`
+	Resourceuri string `json:"resourceURI"`
+	Urls        []struct {
+		Type string `json:"type"`
+		URL  string `json:"url"`
+	} `json:"urls"`
+	Series struct {
+		Resourceuri string `json:"resourceURI"`
+		Name        string `json:"name"`
+	} `json:"series"`
+	Variants        []interface{} `json:"variants"`
+	Collections     []interface{} `json:"collections"`
+	Collectedissues []interface{} `json:"collectedIssues"`
 	Dates           []struct {
-		Type string `json:"type,omitempty"`
-		Date Date   `json:"date,omitempty"`
-	} `json:"dates,omitempty"`
+		Type string `json:"type"`
+		Date string `json:"date"`
+	} `json:"dates"`
 	Prices []struct {
-		Type  string  `json:"type,omitempty"`
-		Price float64 `json:"price,omitempty"`
-	} `json:"prices,omitempty"`
-	Thumbnail  *Image          `json:"thumbnail,omitempty"`
-	Images     []Image         `json:"images,omitempty"`
-	Creators   *CreatorsList   `json:"creators,omitempty"`
-	Characters *CharactersList `json:"characters,omitempty"`
-	Stories    *StoriesList    `json:"stories,omitempty"`
-	Events     *EventsList     `json:"events,omitempty"`
+		Type  string  `json:"type"`
+		Price float64 `json:"price"`
+	} `json:"prices"`
+	Thumbnail struct {
+		Path      string `json:"path"`
+		Extension string `json:"extension"`
+	} `json:"thumbnail"`
+	Images []struct {
+		Path      string `json:"path"`
+		Extension string `json:"extension"`
+	} `json:"images"`
+	Creators struct {
+		Available     int    `json:"available"`
+		Collectionuri string `json:"collectionURI"`
+		Items         []struct {
+			Resourceuri string `json:"resourceURI"`
+			Name        string `json:"name"`
+			Role        string `json:"role"`
+		} `json:"items"`
+		Returned int `json:"returned"`
+	} `json:"creators"`
+	Characters struct {
+		Available     int    `json:"available"`
+		Collectionuri string `json:"collectionURI"`
+		Items         []struct {
+			Resourceuri string `json:"resourceURI"`
+			Name        string `json:"name"`
+		} `json:"items"`
+		Returned int `json:"returned"`
+	} `json:"characters"`
+	Stories struct {
+		Available     int    `json:"available"`
+		Collectionuri string `json:"collectionURI"`
+		Items         []struct {
+			Resourceuri string `json:"resourceURI"`
+			Name        string `json:"name"`
+			Type        string `json:"type"`
+		} `json:"items"`
+		Returned int `json:"returned"`
+	} `json:"stories"`
+	Events struct {
+		Available     int           `json:"available"`
+		Collectionuri string        `json:"collectionURI"`
+		Items         []interface{} `json:"items"`
+		Returned      int           `json:"returned"`
+	} `json:"events"`
 }
+
+// type Comic struct {
+// 	ResourceURI        *string  `json:"resourceURI,omitempty"`
+// 	ID                 *int     `json:"id,omitempty"`
+// 	Name               *string  `json:"id,omitempty"`
+// 	DigitalID          *int     `json:"digitalId,omitempty"`
+// 	Title              *string  `json:"title,omitempty"`
+// 	IssueNumber        *float64 `json:"issueNumber,omitempty"`
+// 	VariantDescription *string  `json:"variantDescription,omitEmpty"`
+// 	Description        *string  `json:"description,omitempty"`
+// 	Modified           *Date    `json:"modified,omitempty"`
+// 	ISBN               *string  `json:"isbn,omitempty"`
+// 	UPC                *string  `json:"upc,omitempty"`
+// 	DiamondCode        *string  `json:"diamondCode,omitempty"`
+// 	EAN                *string  `json:"ean,omitempty"`
+// 	ISSN               *string  `json:"issn,omitempty"`
+// 	Format             *string  `json:"format,omitempty"`
+// 	PageCount          *int     `json:"pageCount,omitEmpty"`
+// 	TextObjects        []struct {
+// 		Type     string `json:"text,omitempty"`
+// 		Language string `json:"language,omitempty"`
+// 		Text     string `json:"text,omitempty"`
+// 	} `json:"textObjects,omitempty"`
+// 	URLs            []URL   `json:"urls,omitempty"`
+// 	Series          *Series `json:"series,omitempty"`
+// 	Variants        []Comic `json:"variants,omitempty"`
+// 	Collections     []Comic `json:"collections,omitempty"`
+// 	CollectedIssues []Comic `json:"collectedIssues,omitempty"`
+// 	Dates           []struct {
+// 		Type string `json:"type,omitempty"`
+// 		Date Date   `json:"date,omitempty"`
+// 	} `json:"dates,omitempty"`
+// 	Prices []struct {
+// 		Type  string  `json:"type,omitempty"`
+// 		Price float64 `json:"price,omitempty"`
+// 	} `json:"prices,omitempty"`
+// 	Thumbnail  *Image          `json:"thumbnail,omitempty"`
+// 	Images     []Image         `json:"images,omitempty"`
+// 	Creators   *CreatorsList   `json:"creators,omitempty"`
+// 	Characters *CharactersList `json:"characters,omitempty"`
+// 	Stories    *StoriesList    `json:"stories,omitempty"`
+// 	Events     *EventsList     `json:"events,omitempty"`
+// }
 
 // Get issues a request to get complete information about a Comic.
 func (c Comic) Get(cl Client) (resp *ComicsResponse, err error) {
