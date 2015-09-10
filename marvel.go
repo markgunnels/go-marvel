@@ -53,10 +53,11 @@ func (c Client) fetch(path string, params interface{}, out interface{}) error {
 		return fmt.Errorf("error response from API: %d\n%s", resp.StatusCode, slurp)
 	}
 	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
 
 	fmt.Println("HELLO")
 
-	return json.Unmarshal(resp.Body, &out)
+	return json.Unmarshal(body, &out)
 }
 
 func (c Client) baseURL(path string, params interface{}) url.URL {
@@ -374,7 +375,7 @@ type Comic struct {
 		Language string `json:"language"`
 		Text     string `json:"text"`
 	} `json:"textObjects"`
-	Resourceuri string `json:"resourceURI"`
+	ResourceURI string `json:"resourceURI"`
 	Urls        []struct {
 		Type string `json:"type"`
 		URL  string `json:"url"`
@@ -484,7 +485,7 @@ type Comic struct {
 
 // Get issues a request to get complete information about a Comic.
 func (c Comic) Get(cl Client) (resp *ComicsResponse, err error) {
-	err = cl.fetch((*c.ResourceURI)[len(basePath):], nil, &resp)
+	err = cl.fetch((c.ResourceURI)[len(basePath):], nil, &resp)
 	return
 }
 
